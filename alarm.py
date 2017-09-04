@@ -1,4 +1,10 @@
-import webbrowser, datetime, os, tkinter.filedialog
+#!/usr/bin/env python
+import webbrowser
+import datetime
+import tkinter.filedialog
+import subprocess
+import sys
+import os
 from time import sleep
 from tkinter import *
 from tkinter import messagebox
@@ -7,22 +13,24 @@ from threading import Thread
 """TODO LIST:
 optimalize  
 notifications
-sort by other things than time (optionmenu      ) - page name (parse), file name
+sort by other things than time (optionmenu) - page name (parse), file name
 """
+
 
 class App:
     def __init__(self, master):  # creates the main UI - labels, entries, buttons and basic frame
-        self.filename=""
-        self.labels=[]
-        self.list_of_alarms=[]
-        self.Finished=False  # used to stop the code
+        self.filename = ""
+        self.labels = []
+        self.list_of_alarms = []
+        self.Finished = False  # used to stop the code
         root.protocol("WM_DELETE_WINDOW", self.on_closing)  # in case cross is used to close it will ask if client wants to close
         self.frame = Frame(master)
         self.frame.pack()
-        self.choose=StringVar(self.frame)
+        self.choose = StringVar(self.frame)
         self.choose.set("Time")
-        self.chosen="Time"
-        keywords=["Time","Link","File name"]
+        self.chosen = "Time"
+        self.hoursmins = None
+        keywords = ["Time", "Link", "File name"]
         for index, name in enumerate(keywords):
             Label(self.frame,text=name).grid(row=index,column=0)
         self.e1 = Entry(self.frame)
@@ -33,13 +41,13 @@ class App:
         Button(self.frame, text="CLOSE", fg="red", command=self.on_closing).grid(row=5, column=0)
         Button(self.frame, text="START", fg="green", command=self.show_entry_fields).grid(row=5, column=1)
         Label(self.frame, text="Sort by").grid(row=7, column= 0)
-        option=OptionMenu(self.frame, self.choose, "Time", "Link", "Name", command=self.options)
+        option = OptionMenu(self.frame, self.choose, "Time", "Link", "Name", command=self.options)
         option.grid(row=7, column=1)
-        keywords=["Time","Link","Name"]
+        keywords = ["Time", "Link", "Name"]
         for index, name in enumerate(keywords):
             Label(self.frame, text=name).grid(row=8, column=index)
 
-    def options(self, value):
+    def options(self):
         self.chosen = self.choose.get()
         self.list()
 
@@ -47,7 +55,7 @@ class App:
         self.filename=tkinter.filedialog.askopenfilename()
 
     def show_entry_fields(self):
-        first, second, third= self.e1.get(), self.e2.get(), self.filename  # when button "Start" is pressed, gets the values from entries and clears them
+        first, second, third = self.e1.get(), self.e2.get(), self.filename  # when button "Start" is pressed, gets the values from entries and clears them
         self.filename = ""
         if first == "":
             pass
@@ -63,7 +71,7 @@ class App:
         for index, label in enumerate(self.labels):  # deletes rows
             for i in range(len(self.labels[index])):  # deletes individual labels
                 self.labels[index][i].destroy()
-        self.labels=[]
+        self.labels = []
 
     def list(self):  # makes new visual list of active alarms
         self.delete_labels()
@@ -71,7 +79,7 @@ class App:
         for index, alarm in enumerate(self.list_of_alarms):
             current = []  # row
             for i, words in enumerate(self.list_of_alarms[index]):
-                l=Label(self.frame, text=words)
+                l = Label(self.frame, text=words)
                 l.grid(row=9+index, column=i)
                 current.append(l)
             button = Button(self.frame, text=X, fg="red", command=lambda variable=alarm:self.delete_alarm(variable))  # bind info of alarm to a button on the same line
@@ -98,9 +106,11 @@ class App:
                     if analyzed == "link":
                         webbrowser.open(url)
                     elif analyzed == "file":
-                        os.startfile(name)  # starts the file
+                        opener = "open" if sys.platform == "darwin" else "xdg-open"
+                        subprocess.call([opener, name]) # starts the file
                     else:
-                        os.startfile(name)
+                        opener = "open" if sys.platform == "darwin" else "xdg-open"
+                        subprocess.call([opener, name])
                         webbrowser.open(url)
                     del self.list_of_alarms[index]
                     self.list()
@@ -110,7 +120,8 @@ class App:
         localtime = datetime.datetime.now()
         self.hoursmins = str(localtime)[11:16]
 
-    def analyze(self, link, name):  # analyzes whether client wants to open link or file
+    @staticmethod
+    def analyze(link, name):  # analyzes whether client wants to open link or file
         if link == "":
             return "file"
         elif name=="":
@@ -121,13 +132,13 @@ class App:
     def sort_alarms(self):  # sorts alarms according to time on base of bubblesort
         if self.chosen == "Time":
             for i in range(len(self.list_of_alarms)):
-                bool_swapped=False  # kills the function if nothing changed
+                bool_swapped = False  # kills the function if nothing changed
                 for a in range(len(self.list_of_alarms)-i-1):
-                    current_time=str(self.list_of_alarms[a][0])[0:2]+str(self.list_of_alarms[a][0])[3:5]  # parses time from list of alarms
-                    next_time=str(self.list_of_alarms[a+1][0])[0:2]+str(self.list_of_alarms[a+1][0])[3:5]  # parses next time from list of alarms
-                    if int(current_time)>int(next_time):
-                        self.list_of_alarms[a],self.list_of_alarms[a+1]=self.list_of_alarms[a+1],self.list_of_alarms[a]  # switches them
-                        bool_swapped=True
+                    current_time = str(self.list_of_alarms[a][0])[0:2]+str(self.list_of_alarms[a][0])[3:5]  # parses time from list of alarms
+                    next_time = str(self.list_of_alarms[a+1][0])[0:2]+str(self.list_of_alarms[a+1][0])[3:5]  # parses next time from list of alarms
+                    if int(current_time) > int(next_time):
+                        self.list_of_alarms[a], self.list_of_alarms[a+1] = self.list_of_alarms[a+1], self.list_of_alarms[a]  # switches them
+                        bool_swapped = True
                 if not bool_swapped:
                     break
 
@@ -135,7 +146,11 @@ class App:
 if __name__ == "__main__":
     root = Tk()
     root.resizable(0, 0)
-    root.iconbitmap(r"alarm.ico")
+    if os.name == "nt":
+        root.iconbitmap(r"data/alarm.ico")
+    else:
+        img = PhotoImage(file='data/alarm.gif')
+        root.tk.call('wm', 'iconphoto', root._w, img)
     app = App(root)  # initializes the class and its functions
     Thread(target=app.alarm).start()  # starts the main algorithm
     root.wm_title("Alarmclock")  # set title of the app
