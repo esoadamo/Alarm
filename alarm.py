@@ -157,3 +157,5 @@ if __name__ == "__main__":
     mainloop()
     if app.Finished:  # when the UI is closed, the Thread is terminated
         Thread(target=app.alarm)._stop()
+
+        Kappa kappa kappa
