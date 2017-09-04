@@ -129,11 +129,17 @@ class App:
                     if analyzed == "link":
                         webbrowser.open(url)
                     elif analyzed == "file":
-                        opener = "open" if sys.platform == "darwin" else "xdg-open"
-                        subprocess.call([opener, name]) # starts the file
+                        if os.name == "nt":  # Windows use a different function to start a file
+                            os.startfile(name)
+                        else:
+                            opener = "open" if sys.platform == "darwin" else "xdg-open"
+                            subprocess.call([opener, name])  # starts the file on Linux
                     else:
-                        opener = "open" if sys.platform == "darwin" else "xdg-open"
-                        subprocess.call([opener, name])
+                        if os.name == "nt":
+                            os.startfile(name)
+                        else:
+                            opener = "open" if sys.platform == "darwin" else "xdg-open"
+                            subprocess.call([opener, name])
                         webbrowser.open(url)
                     del self.list_of_alarms[index]
                     self.list()
