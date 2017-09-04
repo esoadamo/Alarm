@@ -5,6 +5,8 @@ import tkinter.filedialog
 import subprocess
 import sys
 import os
+import requests
+import json
 from time import sleep
 from tkinter import *
 from tkinter import messagebox
@@ -73,17 +75,32 @@ class App:
                 self.labels[index][i].destroy()
         self.labels = []
 
+    @staticmethod
+    def find_equals_index(phrase):  # finds index of sign "="
+        for index, letter in enumerate(phrase):
+            if letter == "=":
+                return index
+
     def list(self):  # makes new visual list of active alarms
         self.delete_labels()
         self.sort_alarms()
         for index, alarm in enumerate(self.list_of_alarms):
             current = []  # row
             for i, words in enumerate(self.list_of_alarms[index]):
-                l = Label(self.frame, text=words)
+                if i == 1 and "youtube.com/" in words:
+                    _id = words[self.find_equals_index(words)+1:len(words)]  # gets video ID tag
+                    url = "https://www.googleapis.com/youtube/v3/videos?part=snippet&id={id}&key={api_key}" # using google API to get video title
+                    r = requests.get(url.format(id=_id, api_key="AIzaSyBqYx6Qoose6vt-7e8evYXOT4ztJOxMXws"))
+                    js = r.json()
+                    items = js["items"][0]
+                    title = items["snippet"]["title"]
+                    l = Label(self.frame, text=title)
+                else:
+                    l = Label(self.frame, text=words)
                 l.grid(row=9+index, column=i)
                 current.append(l)
             button = Button(self.frame, text=X, fg="red", command=lambda variable=alarm:self.delete_alarm(variable))  # bind info of alarm to a button on the same line
-            button.grid(row=9+index,column=5)
+            button.grid(row=9+index, column=5)
             current.append(button)
             self.labels.append(current)  # creates list of labels
 
@@ -124,10 +141,10 @@ class App:
     def analyze(link, name):  # analyzes whether client wants to open link or file
         if link == "":
             return "file"
-        elif name=="":
+        elif name == "":
             return "link"
         else:
-            return"both"
+            return "both"
 
     def sort_alarms(self):  # sorts alarms according to time on base of bubblesort
         if self.chosen == "Time":
@@ -141,6 +158,8 @@ class App:
                         bool_swapped = True
                 if not bool_swapped:
                     break
+        elif self.chosen == "":
+            pass
 
 
 if __name__ == "__main__":
@@ -157,5 +176,3 @@ if __name__ == "__main__":
     mainloop()
     if app.Finished:  # when the UI is closed, the Thread is terminated
         Thread(target=app.alarm)._stop()
-
-        Kappa kappa kappa
