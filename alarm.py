@@ -32,7 +32,7 @@ class App:
         self.choose.set("Time")
         self.chosen = "Time"
         self.hoursmins = None
-        keywords = ["Time", "Link", "File name"]
+        keywords = ["Time", "Link", "Filename"]
         for index, name in enumerate(keywords):
             Label(self.frame,text=name).grid(row=index,column=0)
         self.e1 = Entry(self.frame)
@@ -42,10 +42,10 @@ class App:
         Button(self.frame, text="CHOOSE", command=self.askopenfile).grid(row=2, column=1)  # buttons targetting functions
         Button(self.frame, text="CLOSE", fg="red", command=self.on_closing).grid(row=5, column=0)
         Button(self.frame, text="START", fg="green", command=self.show_entry_fields).grid(row=5, column=1)
-        Label(self.frame, text="Sort by").grid(row=7, column= 0)
-        option = OptionMenu(self.frame, self.choose, "Time", "Link", "Name", command=self.options)
+        Label(self.frame, text="Sort by").grid(row=7, column=0)
+        option = OptionMenu(self.frame, self.choose, "Time", "Link", "Filename", command=self.options)
         option.grid(row=7, column=1)
-        keywords = ["Time", "Link", "Name"]
+        keywords = ["Time", "Link", "Filename"]
         for index, name in enumerate(keywords):
             Label(self.frame, text=name).grid(row=8, column=index)
 
@@ -54,7 +54,7 @@ class App:
         self.list()
 
     def askopenfile(self):  # entry of a file
-        self.filename=tkinter.filedialog.askopenfilename()
+        self.filename = tkinter.filedialog.askopenfilename()
 
     def show_entry_fields(self):
         first, second, third = self.e1.get(), self.e2.get(), self.filename  # when button "Start" is pressed, gets the values from entries and clears them
@@ -95,6 +95,12 @@ class App:
                     items = js["items"][0]
                     title = items["snippet"]["title"]
                     l = Label(self.frame, text=title)
+                elif i == 2:
+                    for j in range(len(words)):
+                        if words[len(words) - 1 - j] == "/":
+                            slash_index = j
+                            break
+                    l = Label(self.frame, text=words[-slash_index:])
                 else:
                     l = Label(self.frame, text=words)
                 l.grid(row=9+index, column=i)
@@ -158,7 +164,9 @@ class App:
                         bool_swapped = True
                 if not bool_swapped:
                     break
-        elif self.chosen == "":
+        elif self.chosen == "Link":
+            pass
+        elif self.chosen == "Filename":
             pass
 
 
