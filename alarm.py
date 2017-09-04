@@ -61,7 +61,11 @@ class App:
         self.filename = ""
         if first == "":
             pass
-        elif first == '' and second == '' and third == "":
+        elif int(first[3:5]) >= 60:  # checks if time is in an OK format
+            pass
+        elif int(first[0:2]) >= 24:
+            pass
+        elif second == '' and third == "":
             pass
         else:
             self.list_of_alarms.append([first, second, third])
@@ -95,7 +99,7 @@ class App:
                     items = js["items"][0]
                     title = items["snippet"]["title"]
                     l = Label(self.frame, text=title)
-                elif i == 2:
+                elif i == 2 and words != "":
                     for j in range(len(words)):
                         if words[len(words) - 1 - j] == "/":
                             slash_index = j
@@ -105,7 +109,7 @@ class App:
                     l = Label(self.frame, text=words)
                 l.grid(row=9+index, column=i)
                 current.append(l)
-            button = Button(self.frame, text=X, fg="red", command=lambda variable=alarm:self.delete_alarm(variable))  # bind info of alarm to a button on the same line
+            button = Button(self.frame, text=X, fg="red", command=lambda variable=alarm: self.delete_alarm(variable))  # bind info of alarm to a button on the same line
             button.grid(row=9+index, column=5)
             current.append(button)
             self.labels.append(current)  # creates list of labels
