@@ -91,14 +91,17 @@ class App:
         for index, alarm in enumerate(self.list_of_alarms):
             current = []  # row
             for i, words in enumerate(self.list_of_alarms[index]):
-                if i == 1 and "youtube.com/" in words:
+                if i == 1 and "youtube.com/watch?v" in words:
                     _id = words[self.find_equals_index(words)+1:len(words)]  # gets video ID tag
                     url = "https://www.googleapis.com/youtube/v3/videos?part=snippet&id={id}&key={api_key}" # using google API to get video title
                     r = requests.get(url.format(id=_id, api_key="AIzaSyBqYx6Qoose6vt-7e8evYXOT4ztJOxMXws"))
                     js = r.json()
+                    print(js)
                     items = js["items"][0]
                     title = items["snippet"]["title"]
-                    l = Label(self.frame, text=title)
+                    author = items["snippet"]["channelTitle"]
+                    text_to_show = "{author}: {title}".format(author=author, title=title)
+                    l = Label(self.frame, text=text_to_show)
                 elif i == 2 and words != "":
                     for j in range(len(words)):
                         if words[len(words) - 1 - j] == "/":
