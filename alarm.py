@@ -96,7 +96,6 @@ class App:
                     url = "https://www.googleapis.com/youtube/v3/videos?part=snippet&id={id}&key={api_key}" # using google API to get video title
                     r = requests.get(url.format(id=_id, api_key="AIzaSyBqYx6Qoose6vt-7e8evYXOT4ztJOxMXws"))
                     js = r.json()
-                    print(js)
                     items = js["items"][0]
                     title = items["snippet"]["title"]
                     author = items["snippet"]["channelTitle"]
