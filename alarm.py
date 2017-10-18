@@ -149,7 +149,7 @@ class App:
                         webbrowser.open(url)
                     del self.list_of_alarms[index]
                     self.list()
-            sleep(1)
+            sleep(0.75)
 
     def get_time(self):  # gets current time and parses it to hh:mm format
         localtime = datetime.datetime.now()
