@@ -40,8 +40,8 @@ class App:
         self.e1.grid(row=0, column=1)
         self.e2.grid(row=1, column=1)
         Button(self.frame, text="CHOOSE", command=self.askopenfile).grid(row=2, column=1)  # buttons targetting functions
-        Button(self.frame, text="CLOSE", fg="red", command=self.on_closing).grid(row=5, column=0)
-        Button(self.frame, text="START", fg="green", command=self.show_entry_fields).grid(row=5, column=1)
+        Button(self.frame, text="CLOSE", fg="#FF4949", command=self.on_closing).grid(row=5, column=0)
+        Button(self.frame, text="START", fg="#13CE66", command=self.show_entry_fields).grid(row=5, column=1)
         Label(self.frame, text="Sort by").grid(row=7, column=0)
         option = OptionMenu(self.frame, self.choose, "Time", "Link", "Filename", command=self.options)
         option.grid(row=7, column=1)
