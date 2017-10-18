@@ -21,6 +21,7 @@ sort by other things than time (optionmenu) - page name (parse), file name
 
 class App:
     def __init__(self, master):  # creates the main UI - labels, entries, buttons and basic frame
+        self.font = "Monotype"
         self.filename = ""
         self.labels = []
         self.list_of_alarms = []
@@ -35,19 +36,19 @@ class App:
         keywords = ["Time", "Link", "Filename"]
         for index, name in enumerate(keywords):
             Label(self.frame,text=name).grid(row=index,column=0)
-        self.e1 = Entry(self.frame)
-        self.e2 = Entry(self.frame)
+        self.e1 = Entry(self.frame,  font=self.font)
+        self.e2 = Entry(self.frame, font=self.font)
         self.e1.grid(row=0, column=1)
         self.e2.grid(row=1, column=1)
-        Button(self.frame, text="CHOOSE", command=self.askopenfile).grid(row=2, column=1)  # buttons targetting functions
-        Button(self.frame, text="CLOSE", fg="#FF4949", command=self.on_closing).grid(row=5, column=0)
-        Button(self.frame, text="START", fg="#13CE66", command=self.show_entry_fields).grid(row=5, column=1)
-        Label(self.frame, text="Sort by").grid(row=7, column=0)
+        Button(self.frame, font=self.font, text="CHOOSE", command=self.askopenfile).grid(row=2, column=1)  # buttons targetting functions
+        Button(self.frame, font=self.font, text="CLOSE", fg="#FF4949", command=self.on_closing).grid(row=5, column=0)
+        Button(self.frame, font=self.font, text="START", fg="#13CE66", command=self.show_entry_fields).grid(row=5, column=1)
+        Label(self.frame, font=self.font, text="Sort by").grid(row=7, column=0)
         option = OptionMenu(self.frame, self.choose, "Time", "Link", "Filename", command=self.options)
         option.grid(row=7, column=1)
         keywords = ["Time", "Link", "Filename"]
         for index, name in enumerate(keywords):
-            Label(self.frame, text=name).grid(row=8, column=index)
+            Label(self.frame, font=self.font, text=name).grid(row=8, column=index)
 
     def options(self):
         self.chosen = self.choose.get()
@@ -100,7 +101,7 @@ class App:
                     title = items["snippet"]["title"]
                     author = items["snippet"]["channelTitle"]
                     text_to_show = "{author}: {title}".format(author=author, title=title)
-                    l = Label(self.frame, text=text_to_show)
+                    l = Label(self.frame, font=self.font, text=text_to_show)
                 elif i == 2 and words != "":
                     for j in range(len(words)):
                         if words[len(words) - 1 - j] == "/":
@@ -111,7 +112,7 @@ class App:
                     l = Label(self.frame, text=words)
                 l.grid(row=9+index, column=i)
                 current.append(l)
-            button = Button(self.frame, text=X, fg="red", command=lambda variable=alarm: self.delete_alarm(variable))  # bind info of alarm to a button on the same line
+            button = Button(self.frame, font=self.font, text=X, fg="red", command=lambda variable=alarm: self.delete_alarm(variable))  # bind info of alarm to a button on the same line
             button.grid(row=9+index, column=5)
             current.append(button)
             self.labels.append(current)  # creates list of labels
