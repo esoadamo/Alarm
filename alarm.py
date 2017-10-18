@@ -60,19 +60,21 @@ class App:
     def show_entry_fields(self):
         first, second, third = self.e1.get(), self.e2.get(), self.filename  # when button "Start" is pressed, gets the values from entries and clears them
         self.filename = ""
-        if first == "":
-            pass
-        elif int(first[3:5]) >= 60:  # checks if time is in an OK format
-            pass
-        elif int(first[0:2]) >= 24:
-            pass
-        elif second == '' and third == "":
-            pass
-        else:
-            self.list_of_alarms.append([first, second, third])
-            self.e1.delete(0, END)
-            self.e2.delete(0, END)
-            self.list()
+        try:
+            hour, minute = first.split(':', 1)
+            hour = int(hour)
+            minute = int(minute)
+            if hour < 0 or hour > 24 or minute < 0 or minute > 60:
+                raise ValueError("Invalid time scale")
+        except ValueError:
+            messagebox.showinfo('Invalid time', 'Time should be entered in HH:MM format')
+            return
+        if second == '' and third == "":
+            return
+        self.list_of_alarms.append([first, second, third])
+        self.e1.delete(0, END)
+        self.e2.delete(0, END)
+        self.list()
 
     def delete_labels(self):  # deletes all labels showing alarms
         for index, label in enumerate(self.labels):  # deletes rows
